@@ -5,18 +5,27 @@ FROM ubuntu:24.04
 # Prevent interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install system dependencies
+# Install initial dependencies and add deadsnakes PPA for Python versions
 RUN apt-get update && apt-get install -y \
-    # Python versions
     software-properties-common \
+    curl \
+    gpg \
+    && add-apt-repository ppa:deadsnakes/ppa -y \
+    && apt-get update
+
+# Install all dependencies
+RUN apt-get install -y \
+    # Python 3.11 from deadsnakes
     python3.11 \
     python3.11-dev \
     python3.11-venv \
+    python3.11-distutils \
+    # Python 3.12 (should be available in 24.04)
     python3.12 \
     python3.12-dev \
     python3.12-venv \
+    # pip and build tools
     python3-pip \
-    # Build tools
     build-essential \
     git \
     # Qt/PySide6 dependencies
@@ -35,7 +44,7 @@ RUN apt-get update && apt-get install -y \
     # X11 utilities for testing
     x11-utils \
     xvfb \
-    # Additional Qt dependencies that might be needed
+    # Additional Qt dependencies
     libglib2.0-0 \
     libdbus-1-3 \
     libfontconfig1 \
@@ -49,7 +58,13 @@ RUN apt-get update && apt-get install -y \
     # Cleanup
     && rm -rf /var/lib/apt/lists/*
 
-# Install pip for both Python versions
+# Install pip for Python 3.11 (needs get-pip.py)
+RUN curl https://bootstrap.pypa.io/get-pip.py | python3.11
+
+# Install/upgrade pip for Python 3.12
+RUN python3.12 -m ensurepip --upgrade || python3.12 -m pip install --upgrade pip
+
+# Upgrade pip, setuptools, wheel for both versions
 RUN python3.11 -m pip install --upgrade pip setuptools wheel && \
     python3.12 -m pip install --upgrade pip setuptools wheel
 
