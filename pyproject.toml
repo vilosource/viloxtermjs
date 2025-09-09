@@ -39,16 +39,25 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-qt>=4.0.0",
     "black>=22.0.0",
     "flake8>=4.0.0",
     "mypy>=0.950",
+    "build>=0.10.0",
+    "twine>=4.0.0",
+]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "pytest-qt>=4.0.0",
 ]
 
 [project.urls]
-Homepage = "https://github.com/yourusername/viloxtermjs"
-Documentation = "https://github.com/yourusername/viloxtermjs/wiki"
-Repository = "https://github.com/yourusername/viloxtermjs"
-"Bug Tracker" = "https://github.com/yourusername/viloxtermjs/issues"
+Homepage = "https://github.com/vilosource/viloxtermjs"
+Documentation = "https://github.com/vilosource/viloxtermjs/wiki"
+Repository = "https://github.com/vilosource/viloxtermjs"
+"Bug Tracker" = "https://github.com/vilosource/viloxtermjs/issues"
 
 [tool.setuptools]
 packages = ["viloxtermjs"]

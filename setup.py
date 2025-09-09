@@ -16,7 +16,7 @@ setup(
     description="Qt/PySide6 terminal emulator widgets with xterm.js backend",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/viloxtermjs",
+    url="https://github.com/vilosource/viloxtermjs",
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
@@ -45,9 +45,18 @@ setup(
     extras_require={
         "dev": [
             "pytest>=7.0.0",
+            "pytest-cov>=4.0.0",
+            "pytest-qt>=4.0.0",
             "black>=22.0.0",
             "flake8>=4.0.0",
             "mypy>=0.950",
+            "build>=0.10.0",
+            "twine>=4.0.0",
+        ],
+        "test": [
+            "pytest>=7.0.0",
+            "pytest-cov>=4.0.0",
+            "pytest-qt>=4.0.0",
         ],
     },
     entry_points={
@@ -56,8 +65,8 @@ setup(
         ],
     },
     project_urls={
-        "Bug Reports": "https://github.com/yourusername/viloxtermjs/issues",
-        "Source": "https://github.com/yourusername/viloxtermjs",
-        "Documentation": "https://github.com/yourusername/viloxtermjs/wiki",
+        "Bug Reports": "https://github.com/vilosource/viloxtermjs/issues",
+        "Source": "https://github.com/vilosource/viloxtermjs",
+        "Documentation": "https://github.com/vilosource/viloxtermjs/wiki",
     },
 )
