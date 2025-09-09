@@ -31,8 +31,9 @@ RUN apt-get install -y \
     pipx \
     build-essential \
     git \
-    # Qt/PySide6 dependencies
+    # Qt/PySide6 Core dependencies
     libgl1 \
+    libgl1-mesa-glx \
     libegl1 \
     libxkbcommon-x11-0 \
     libxcb-icccm4 \
@@ -44,23 +45,51 @@ RUN apt-get install -y \
     libxcb-xfixes0 \
     libxcb-shape0 \
     libxcb-cursor0 \
-    # X11 utilities for testing
-    x11-utils \
-    xvfb \
-    # Additional Qt dependencies
-    libglib2.0-0 \
-    libdbus-1-3 \
-    libfontconfig1 \
     libxcb-xkb1 \
     libxkbcommon0 \
     libxcb-render0 \
     libxcb-shm0 \
-    libxi6 \
+    libxcb-sync1 \
+    libxcb-present0 \
+    libxcb-dri2-0 \
+    libxcb-dri3-0 \
+    libxcb-glx0 \
+    # X11 libraries required by Qt WebEngine
+    libx11-6 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
     libxrandr2 \
     libxrender1 \
-    # NSS libraries for Qt WebEngine
+    libxss1 \
+    libxtst6 \
+    libxi6 \
+    libxkbfile1 \
+    # X11 utilities for testing
+    x11-utils \
+    xvfb \
+    # Additional Qt/WebEngine dependencies
+    libglib2.0-0 \
+    libdbus-1-3 \
+    libfontconfig1 \
+    libfreetype6 \
+    libharfbuzz0b \
+    libicu74 \
+    libjpeg-turbo8 \
+    libpng16-16 \
+    libwebp7 \
+    # Audio/Video libraries
+    libasound2t64 \
+    libpulse0 \
+    # NSS/NSPR libraries for Qt WebEngine
     libnss3 \
     libnspr4 \
+    # Additional system libraries
+    libdrm2 \
+    libgbm1 \
+    libxshmfence1 \
     # Cleanup
     && rm -rf /var/lib/apt/lists/*
 
