@@ -1,0 +1,111 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+  pull_request:
+    branches:
+      - develop
+      - main
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      
+      # Install system dependencies for Qt on Linux
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libgl1-mesa-glx \
+            libxkbcommon-x11-0 \
+            libxcb-icccm4 \
+            libxcb-image0 \
+            libxcb-keysyms1 \
+            libxcb-randr0 \
+            libxcb-render-util0 \
+            libxcb-xinerama0 \
+            libxcb-xfixes0 \
+            x11-utils \
+            libegl1-mesa \
+            libxcb-shape0 \
+            libxcb-cursor0 \
+            xvfb
+      
+      # Setup virtual display for headless testing
+      - name: Setup virtual display (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          export DISPLAY=:99
+          sudo Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+          sleep 3
+      
+      # Install Python dependencies
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[test]"
+      
+      # Run tests with proper environment
+      - name: Run tests
+        run: |
+          pytest tests/ -v --cov=viloxtermjs --cov-report=xml --cov-report=term
+        env:
+          QT_QPA_PLATFORM: offscreen
+          DISPLAY: ${{ runner.os == 'Linux' && ':99' || '' }}
+          CI: true
+      
+      # Upload coverage reports (optional)
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-${{ matrix.os }}-py${{ matrix.python-version }}
+          fail_ci_if_error: false
+
+  lint:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black mypy
+          pip install -e .
+      
+      - name: Check code formatting with black
+        run: |
+          black --check viloxtermjs/ tests/ || true
+      
+      - name: Lint with flake8
+        run: |
+          flake8 viloxtermjs/ tests/ --count --select=E9,F63,F7,F82 --show-source --statistics || true
+          flake8 viloxtermjs/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=100 --statistics
+      
+      - name: Type check with mypy
+        run: |
+          mypy viloxtermjs/ --ignore-missing-imports || true
