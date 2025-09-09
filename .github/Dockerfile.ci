@@ -9,6 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     software-properties-common \
     curl \
+    wget \
     gpg \
     && add-apt-repository ppa:deadsnakes/ppa -y \
     && apt-get update
@@ -58,11 +59,13 @@ RUN apt-get install -y \
     # Cleanup
     && rm -rf /var/lib/apt/lists/*
 
-# Install pip for Python 3.11 (needs get-pip.py)
-RUN curl https://bootstrap.pypa.io/get-pip.py | python3.11
+# Install pip for Python 3.11 using ensurepip or get-pip
+RUN python3.11 -m ensurepip --upgrade 2>/dev/null || \
+    (wget -q https://bootstrap.pypa.io/get-pip.py && python3.11 get-pip.py && rm get-pip.py)
 
 # Install/upgrade pip for Python 3.12
-RUN python3.12 -m ensurepip --upgrade || python3.12 -m pip install --upgrade pip
+RUN python3.12 -m ensurepip --upgrade 2>/dev/null || \
+    python3.12 -m pip install --upgrade pip
 
 # Upgrade pip, setuptools, wheel for both versions
 RUN python3.11 -m pip install --upgrade pip setuptools wheel && \
