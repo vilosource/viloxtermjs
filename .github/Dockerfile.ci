@@ -1,0 +1,71 @@
+# CI Docker image for viloxtermjs
+# Based on Ubuntu 24.04 with Python 3.11 and 3.12 + Qt dependencies
+FROM ubuntu:24.04
+
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    # Python versions
+    software-properties-common \
+    python3.11 \
+    python3.11-dev \
+    python3.11-venv \
+    python3.12 \
+    python3.12-dev \
+    python3.12-venv \
+    python3-pip \
+    # Build tools
+    build-essential \
+    git \
+    # Qt/PySide6 dependencies
+    libgl1 \
+    libegl1 \
+    libxkbcommon-x11-0 \
+    libxcb-icccm4 \
+    libxcb-image0 \
+    libxcb-keysyms1 \
+    libxcb-randr0 \
+    libxcb-render-util0 \
+    libxcb-xinerama0 \
+    libxcb-xfixes0 \
+    libxcb-shape0 \
+    libxcb-cursor0 \
+    # X11 utilities for testing
+    x11-utils \
+    xvfb \
+    # Additional Qt dependencies that might be needed
+    libglib2.0-0 \
+    libdbus-1-3 \
+    libfontconfig1 \
+    libxcb-xkb1 \
+    libxkbcommon0 \
+    libxcb-render0 \
+    libxcb-shm0 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    # Cleanup
+    && rm -rf /var/lib/apt/lists/*
+
+# Install pip for both Python versions
+RUN python3.11 -m pip install --upgrade pip setuptools wheel && \
+    python3.12 -m pip install --upgrade pip setuptools wheel
+
+# Pre-install common test dependencies to speed up CI
+RUN python3.11 -m pip install pytest pytest-qt pytest-cov black flake8 mypy && \
+    python3.12 -m pip install pytest pytest-qt pytest-cov black flake8 mypy
+
+# Set up virtual display for headless testing
+ENV DISPLAY=:99
+ENV QT_QPA_PLATFORM=offscreen
+
+# Create a non-root user for running tests (optional but recommended)
+RUN useradd -m -s /bin/bash testuser
+
+# Set working directory
+WORKDIR /workspace
+
+# Entry point for CI
+CMD ["/bin/bash"]
