@@ -21,10 +21,18 @@ jobs:
 
       - name: Install dependencies
         run: |
+          pip install --upgrade pip
+          pip install build twine
           pip install python-semantic-release
 
       - name: Run semantic-release (version, changelog, release, PyPI publish)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PYPI_TOKEN: ${{ secrets.PYPI_TOKEN }}
-        run: semantic-release publish
+        run: |
+          # Configure git for semantic-release
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Run semantic-release
+          semantic-release publish

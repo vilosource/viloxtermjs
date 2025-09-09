@@ -68,3 +68,15 @@ python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true
+
+[tool.semantic_release]
+version_variable = "pyproject.toml:version"
+version_source = "tag"
+commit_message = "chore(release): {version}\n\n{changelog}"
+commit_version_number = true
+tag_commit = true
+upload_to_pypi = true
+upload_to_release = true
+build_command = "pip install build && python -m build"
+branch = "main"
+hvcs = "github"
