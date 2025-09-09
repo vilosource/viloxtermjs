@@ -64,15 +64,15 @@ RUN apt-get install -y \
 # Allow pip to install packages system-wide (needed for CI container)
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
 
-# Install pip for Python 3.11 using get-pip
+# Install pip for Python 3.11 using get-pip with ignore-installed flag
 RUN wget -q https://bootstrap.pypa.io/get-pip.py && \
-    python3.11 get-pip.py && \
+    python3.11 get-pip.py --ignore-installed && \
     rm get-pip.py
 
 # Python 3.12 should have pip from python3.12-full package
-# Upgrade pip for both versions
-RUN python3.11 -m pip install --upgrade pip setuptools wheel && \
-    python3.12 -m pip install --upgrade pip setuptools wheel
+# Upgrade pip for both versions (use --upgrade --force-reinstall to avoid conflicts)
+RUN python3.11 -m pip install --upgrade --force-reinstall pip setuptools wheel && \
+    python3.12 -m pip install --upgrade --force-reinstall pip setuptools wheel
 
 # Pre-install common test dependencies to speed up CI
 RUN python3.11 -m pip install pytest pytest-qt pytest-cov black flake8 mypy && \
