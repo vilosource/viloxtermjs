@@ -1,5 +1,6 @@
 # Viloxtermjs
 
+[![Tests](https://github.com/vilosource/viloxtermjs/actions/workflows/test.yml/badge.svg)](https://github.com/vilosource/viloxtermjs/actions/workflows/test.yml)
 [![Python Version](https://img.shields.io/pypi/pyversions/viloxtermjs)](https://pypi.org/project/viloxtermjs/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
