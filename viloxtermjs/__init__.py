@@ -23,7 +23,11 @@ __email__ = "your.email@example.com"
 from .widget import TerminalWidget
 from .server import TerminalServer
 
-__all__ = ['TerminalWidget', 'TerminalServer']
+__all__ = ['TerminalWidget', 'TerminalServer', 'get_version']
+
+def get_version():
+    """Return the current version of viloxtermjs."""
+    return __version__
 
 # Environment setup for WSL/VM compatibility
 import os
