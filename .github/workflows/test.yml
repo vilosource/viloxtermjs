@@ -5,10 +5,20 @@ on:
     branches:
       - develop
       - main
+    # Skip tests if only Docker CI files are changed
+    paths-ignore:
+      - '.github/Dockerfile.ci'
+      - '.github/workflows/docker-ci-image.yml'
+      - '.github/CI_DOCKER.md'
   pull_request:
     branches:
       - develop
       - main
+    # Skip tests if only Docker CI files are changed
+    paths-ignore:
+      - '.github/Dockerfile.ci'
+      - '.github/workflows/docker-ci-image.yml'
+      - '.github/CI_DOCKER.md'
 
 jobs:
   test:
