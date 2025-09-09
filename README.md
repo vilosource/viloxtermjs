@@ -3,6 +3,7 @@
 [![Tests](https://github.com/vilosource/viloxtermjs/actions/workflows/test.yml/badge.svg)](https://github.com/vilosource/viloxtermjs/actions/workflows/test.yml)
 [![Python Version](https://img.shields.io/pypi/pyversions/viloxtermjs)](https://pypi.org/project/viloxtermjs/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 **Easy-to-use Qt/PySide6 terminal emulator widgets for Python applications**
 
