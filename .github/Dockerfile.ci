@@ -33,7 +33,6 @@ RUN apt-get install -y \
     git \
     # Qt/PySide6 Core dependencies
     libgl1 \
-    libgl1-mesa-glx \
     libegl1 \
     libxkbcommon-x11-0 \
     libxcb-icccm4 \
@@ -76,10 +75,10 @@ RUN apt-get install -y \
     libfontconfig1 \
     libfreetype6 \
     libharfbuzz0b \
-    libicu74 \
-    libjpeg-turbo8 \
-    libpng16-16 \
-    libwebp7 \
+    libicu-dev \
+    libjpeg-dev \
+    libpng-dev \
+    libwebp-dev \
     # Audio/Video libraries
     libasound2t64 \
     libpulse0 \
