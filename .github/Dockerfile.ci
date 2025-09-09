@@ -60,9 +60,7 @@ RUN apt-get install -y \
     libxrender1 \
     # NSS libraries for Qt WebEngine
     libnss3 \
-    libnssutil3 \
     libnspr4 \
-    libsmime3 \
     # Cleanup
     && rm -rf /var/lib/apt/lists/*
 
