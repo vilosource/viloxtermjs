@@ -20,9 +20,6 @@ setup(
     packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.8",
-        "Programming Language :: Python :: 3.9",
-        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "License :: OSI Approved :: MIT License",
@@ -33,7 +30,7 @@ setup(
         "Topic :: Software Development :: Widget Sets",
         "Topic :: Terminals :: Terminal Emulators/X Terminals",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.11",
     install_requires=[
         "PySide6>=6.0.0",
         "flask>=2.0.0",
