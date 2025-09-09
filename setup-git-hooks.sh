@@ -10,6 +10,7 @@ if [ $? -eq 0 ]; then
     echo "✅ Git hooks successfully configured!"
     echo ""
     echo "The following hooks are now active:"
+    echo "  • pre-commit: Automatically formats Python files with black"
     echo "  • commit-msg: Prevents AI attributions in commit messages"
     echo ""
     echo "To disable hooks temporarily, run:"

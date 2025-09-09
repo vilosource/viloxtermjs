@@ -1,0 +1,37 @@
+#!/bin/bash
+# Pre-commit hook to run black formatter on Python files
+
+echo "Running black formatter..."
+
+# Get the list of Python files that are staged for commit
+PYTHON_FILES=$(git diff --cached --name-only --diff-filter=ACM | grep '\.py$')
+
+if [ -z "$PYTHON_FILES" ]; then
+    echo "No Python files to format"
+    exit 0
+fi
+
+# Check if black is installed
+if ! command -v black &> /dev/null; then
+    echo "⚠️  Warning: black is not installed. Skipping formatting."
+    echo "   Install it with: pip install black"
+    exit 0
+fi
+
+# Format the Python files
+echo "Formatting Python files with black..."
+for file in $PYTHON_FILES; do
+    # Format the file
+    black "$file" 2>/dev/null
+    
+    # If black made changes, add them to the commit
+    if [ $? -eq 0 ]; then
+        git add "$file"
+        echo "  ✅ Formatted: $file"
+    else
+        echo "  ⚠️  Could not format: $file"
+    fi
+done
+
+echo "Black formatting complete!"
+exit 0
