@@ -19,6 +19,7 @@ Viloxtermjs provides production-ready terminal emulator widgets that you can eas
 - 🚀 **WebSocket Communication** - Real-time bidirectional communication
 - 🖼️ **WSL/VM Compatible** - Works in Windows Subsystem for Linux and VMs
 - 📦 **Zero Configuration** - Works out of the box with sensible defaults
+- ✅ **CI/CD Ready** - Automated testing with GitHub Actions
 
 ## 🚀 Quick Start
 
