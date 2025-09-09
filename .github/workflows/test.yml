@@ -33,7 +33,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            libgl1-mesa-glx \
+            libgl1 \
+            libegl1 \
             libxkbcommon-x11-0 \
             libxcb-icccm4 \
             libxcb-image0 \
@@ -43,7 +44,6 @@ jobs:
             libxcb-xinerama0 \
             libxcb-xfixes0 \
             x11-utils \
-            libegl1-mesa \
             libxcb-shape0 \
             libxcb-cursor0 \
             xvfb
