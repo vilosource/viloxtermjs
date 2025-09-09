@@ -70,9 +70,9 @@ RUN wget -q https://bootstrap.pypa.io/get-pip.py && \
     rm get-pip.py
 
 # Python 3.12 should have pip from python3.12-full package
-# Upgrade pip for both versions (use --upgrade --force-reinstall to avoid conflicts)
-RUN python3.11 -m pip install --upgrade --force-reinstall pip setuptools wheel && \
-    python3.12 -m pip install --upgrade --force-reinstall pip setuptools wheel
+# Upgrade pip for both versions (use --ignore-installed to avoid conflicts with system packages)
+RUN python3.11 -m pip install --upgrade --ignore-installed pip setuptools wheel && \
+    python3.12 -m pip install --upgrade --ignore-installed pip setuptools wheel
 
 # Pre-install common test dependencies to speed up CI
 RUN python3.11 -m pip install pytest pytest-qt pytest-cov black flake8 mypy && \
