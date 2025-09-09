@@ -1,0 +1,64 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "viloxtermjs"
+version = "0.1.0"
+authors = [
+    {name = "Your Name", email = "your.email@example.com"},
+]
+description = "Qt/PySide6 terminal emulator widgets with xterm.js backend"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Widget Sets",
+    "Topic :: Terminals :: Terminal Emulators/X Terminals",
+]
+dependencies = [
+    "PySide6>=6.0.0",
+    "flask>=2.0.0",
+    "flask-socketio>=5.0.0",
+    "python-socketio>=5.0.0",
+    "python-engineio>=4.0.0",
+    "simple-websocket>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "black>=22.0.0",
+    "flake8>=4.0.0",
+    "mypy>=0.950",
+]
+
+[project.urls]
+Homepage = "https://github.com/yourusername/viloxtermjs"
+Documentation = "https://github.com/yourusername/viloxtermjs/wiki"
+Repository = "https://github.com/yourusername/viloxtermjs"
+"Bug Tracker" = "https://github.com/yourusername/viloxtermjs/issues"
+
+[tool.setuptools]
+packages = ["viloxtermjs"]
+
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
