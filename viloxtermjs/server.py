@@ -101,8 +101,37 @@ class TerminalServer:
     <meta charset="utf-8" />
     <title>Terminal</title>
     <style>
-        body { margin: 0; padding: 0; overflow: hidden; }
+        body { margin: 0; padding: 0; overflow: hidden; background: #1e1e1e; }
         #terminal { width: 100%; height: 100vh; }
+        
+        /* Custom thin scrollbars for xterm.js */
+        .xterm-viewport::-webkit-scrollbar {
+            width: 8px !important;
+            height: 8px !important;
+        }
+        
+        .xterm-viewport::-webkit-scrollbar-track {
+            background: #1e1e1e !important;
+        }
+        
+        .xterm-viewport::-webkit-scrollbar-thumb {
+            background: #464647 !important;
+            border-radius: 4px !important;
+        }
+        
+        .xterm-viewport::-webkit-scrollbar-thumb:hover {
+            background: #5a5a5c !important;
+        }
+        
+        .xterm-viewport::-webkit-scrollbar-corner {
+            background: #1e1e1e !important;
+        }
+        
+        /* Firefox scrollbar styling */
+        .xterm-viewport {
+            scrollbar-width: thin !important;
+            scrollbar-color: #464647 #1e1e1e !important;
+        }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/xterm@4.11.0/css/xterm.css" />
 </head>
@@ -112,16 +141,86 @@ class TerminalServer:
     <script src="https://unpkg.com/xterm-addon-fit@0.5.0/lib/xterm-addon-fit.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
     <script>
+        // Patch canvas getContext to always use willReadFrequently for 2D contexts
+        // This fixes the Chrome warning about getImageData performance
+        (function() {
+            const originalGetContext = HTMLCanvasElement.prototype.getContext;
+            HTMLCanvasElement.prototype.getContext = function(contextType, ...args) {
+                if (contextType === '2d') {
+                    // Ensure willReadFrequently is set for 2D contexts
+                    let contextAttributes = args[0] || {};
+                    contextAttributes.willReadFrequently = true;
+                    return originalGetContext.call(this, contextType, contextAttributes);
+                }
+                return originalGetContext.apply(this, arguments);
+            };
+        })();
+        
         const term = new Terminal({
             cursorBlink: true,
             macOptionIsMeta: true,
             scrollback: 1000,
+            theme: {
+                background: '#1e1e1e',
+                foreground: '#d4d4d4'
+            }
         });
         
         const fit = new FitAddon.FitAddon();
         term.loadAddon(fit);
         term.open(document.getElementById("terminal"));
-        fit.fit();
+        
+        // Custom fit function that calculates exact dimensions
+        function customFit() {
+            const terminalElement = document.getElementById("terminal");
+            const core = term._core;
+            
+            if (!core || !core._renderService || !core._renderService.dimensions) {
+                // Fallback to standard fit if core not available
+                fit.fit();
+                return;
+            }
+            
+            const dims = core._renderService.dimensions;
+            const cellHeight = dims.actualCellHeight || 17;
+            const cellWidth = dims.actualCellWidth || 9;
+            
+            // Get container dimensions
+            const containerHeight = terminalElement.offsetHeight;
+            const containerWidth = terminalElement.offsetWidth;
+            
+            // Calculate how many complete cells fit
+            const rows = Math.floor(containerHeight / cellHeight);
+            const cols = Math.floor(containerWidth / cellWidth);
+            
+            // Resize terminal to exact cell dimensions
+            if (rows > 0 && cols > 0) {
+                term.resize(cols, rows);
+                
+                // Calculate and set exact pixel dimensions to avoid white space
+                const exactHeight = rows * cellHeight;
+                const exactWidth = cols * cellWidth;
+                
+                // Apply exact dimensions to terminal element
+                const xtermScreen = terminalElement.querySelector('.xterm-screen');
+                if (xtermScreen) {
+                    xtermScreen.style.height = exactHeight + 'px';
+                }
+                
+                // Emit resize with cell dimensions for Qt side
+                const dims = { 
+                    cols: cols, 
+                    rows: rows,
+                    cellHeight: cellHeight,
+                    cellWidth: cellWidth,
+                    preferredHeight: exactHeight
+                };
+                socket.emit("resize", dims);
+                
+                // Store dimensions for external access
+                window.terminalDimensions = dims;
+            }
+        }
         
         term.onData((data) => {
             socket.emit("pty-input", { input: data });
@@ -134,13 +233,13 @@ class TerminalServer:
         });
         
         socket.on("connect", () => {
-            fitToscreen();
+            setTimeout(() => {
+                customFit();
+            }, 100);
         });
         
         function fitToscreen() {
-            fit.fit();
-            const dims = { cols: term.cols, rows: term.rows };
-            socket.emit("resize", dims);
+            customFit();
         }
         
         function debounce(func, wait_ms) {
@@ -153,6 +252,11 @@ class TerminalServer:
         }
         
         window.onresize = debounce(fitToscreen, 50);
+        
+        // Initial fit after terminal is fully loaded
+        setTimeout(() => {
+            customFit();
+        }, 200);
         
         term.attachCustomKeyEventHandler((e) => {
             if (e.type !== "keydown") return true;
@@ -192,7 +296,7 @@ class TerminalServer:
                 self.port = s.getsockname()[1]
         
         def run_server():
-            self.socketio.run(self.app, debug=False, port=self.port, host=self.host)
+            self.socketio.run(self.app, debug=False, port=self.port, host=self.host, allow_unsafe_werkzeug=True)
             
         self.server_thread = threading.Thread(target=run_server, daemon=True)
         self.server_thread.start()
