@@ -63,6 +63,7 @@ RUN apt-get install -y \
 
 # Allow pip to install packages system-wide (needed for CI container)
 ENV PIP_BREAK_SYSTEM_PACKAGES=1
+ENV PIP_ROOT_USER_ACTION=ignore
 
 # Install pip for Python 3.11 using get-pip with ignore-installed flag
 RUN wget -q https://bootstrap.pypa.io/get-pip.py && \
@@ -75,15 +76,17 @@ RUN python3.11 -m pip install --upgrade --ignore-installed pip setuptools wheel 
     python3.12 -m pip install --upgrade --ignore-installed pip setuptools wheel
 
 # Pre-install common test dependencies to speed up CI
-RUN python3.11 -m pip install pytest pytest-qt pytest-cov black flake8 mypy && \
-    python3.12 -m pip install pytest pytest-qt pytest-cov black flake8 mypy
+# Use --ignore-installed and --force-reinstall to avoid conflicts with system packages
+RUN python3.11 -m pip install --ignore-installed --force-reinstall pytest pytest-qt pytest-cov black flake8 mypy && \
+    python3.12 -m pip install --ignore-installed --force-reinstall pytest pytest-qt pytest-cov black flake8 mypy
 
 # Set up virtual display for headless testing
 ENV DISPLAY=:99
 ENV QT_QPA_PLATFORM=offscreen
 
-# Create a non-root user for running tests (optional but recommended)
-RUN useradd -m -s /bin/bash testuser
+# Fix permissions for GitHub Actions
+RUN mkdir -p /github/home/.cache && \
+    chmod -R 777 /github
 
 # Set working directory
 WORKDIR /workspace
